@@ -8,13 +8,14 @@ import java.util.List;
 
 
 /**
- * Simple command to print info about AwooBot.
- * @Author schott512 (Ember)
+ * About command object. Contains the information for returning basic bot info.
+ * @Author Ember (schott512)
  */
 public class AboutCommand extends Command {
 
     public AboutCommand() {
 
+        // Initialize stuff
         this.keyName = "about";
         this.helpText = "Prints information about the bot.";
         this.aliases = new String[]{"A","About","a"};
@@ -26,6 +27,7 @@ public class AboutCommand extends Command {
     @Override
     public void runCommand(MessageReceivedEvent e, List<String> args) {
 
+        // Build Embed with some basic details
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(this.color);
         eb.setTitle("About AwooBot");
@@ -34,7 +36,8 @@ public class AboutCommand extends Command {
         eb.addField("Author Github Username", "schott512", true);
         eb.setFooter("Thanks for using AwooBot!!!");
 
-        e.getChannel().sendMessage(eb.build()).queue();
+        // Reply with embed after building
+        reply(e,eb.build());
 
     }
 

@@ -7,13 +7,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Simple command to check ping.
- * @Author schott512 (Ember)
+ * Ping command object. Contains the information for calculating/returning API latency.
+ * @Author Ember (schott512)
  */
 public class PingCommand extends Command {
 
     public PingCommand() {
 
+        // Initialize stuff
         this.keyName = "ping";
         this.helpText = "Checks API ping.";
         this.aliases = new String[]{"P","Ping","p"};
@@ -25,13 +26,15 @@ public class PingCommand extends Command {
     @Override
     public void runCommand(MessageReceivedEvent e, List<String> args) {
 
+        // Build an embed to respond with
         EmbedBuilder eb = new EmbedBuilder();
-        Long dif = new Date().getTime() - Date.from(e.getMessage().getTimeCreated().toInstant()).getTime();
+        Long dif = (new Date().getTime()) - Date.from(e.getMessage().getTimeCreated().toInstant()).getTime();
         eb.setColor(this.color);
         eb.setTitle("Pong!");
         eb.addField("Latency", dif.toString() + " ms", true);
 
-        e.getChannel().sendMessage(eb.build()).queue();
+        // Reply with the embed (after building)
+        reply(e,eb.build());
 
     }
 

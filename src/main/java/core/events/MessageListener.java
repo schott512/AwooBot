@@ -12,7 +12,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class MessageListener extends ListenerAdapter {
 
     private String defaultPrefix = Configuration.defaultPrefix;
-    private static Command[] cList = {new AboutCommand(), new PingCommand(), new EchoCommand(), new PurgeCommand()};
+    private static Command[] cList = {new AboutCommand(), new PingCommand(), new EchoCommand(), new PurgeCommand(),
+                                      new TestArgsCommand(), new AddEmoteCommand()};
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
@@ -20,11 +21,14 @@ public class MessageListener extends ListenerAdapter {
         // Immediately ignore if message is bot generated
         if (e.getAuthor().isBot()) { return; }
 
+        // Grab message content and parse out the command name used
         String content = e.getMessage().getContentRaw();
         String cName = content.split(" ")[0].replace(defaultPrefix, "");
 
+        // Check if content refers to our bot
         if(content.startsWith(defaultPrefix)) {
 
+            // Loop through known commands to see if any are referenced by the message, call that command if true
             for (Command c : cList) {
 
                 if (c.referencedBy(cName)) {c.execute(e);}
