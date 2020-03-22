@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Object representing a basic command.
@@ -58,126 +57,34 @@ public abstract class Command {
     /**
      * Function to check whether the command may be run by the calling user in the calling guild/dm and then
      * executes the command by calling the runCommand() function.
-     * @param e The MessageEvent which triggered this command
+     * @param mre The MessageEvent which triggered this command
      */
-    public void execute(MessageReceivedEvent e) {
+    public void execute(MessageReceivedEvent mre, List<String> args) {
 
         // Check if the source of the command is a guild
-        if (e.isFromGuild()) {
+        if (mre.isFromGuild()) {
 
             // Reject if this command can't be used in a guild
-            if (!guildCapable) { reject(e,"Command may not be used in guilds."); return; }
+            if (!guildCapable) { reject(mre,"Command may not be used in guilds."); return; }
 
             // Reject if permissions within guild are not proper
-            if (!e.getGuild().getSelfMember().hasPermission(e.getTextChannel(),bPerms)){ reject(e,"I lack required permissions for this action."); return; }
-            if (!e.getMember().hasPermission(e.getTextChannel(),uPerms)) { reject(e,"User lacks required permissions."); return; }
+            if (!mre.getGuild().getSelfMember().hasPermission(mre.getTextChannel(),bPerms)){ reject(mre,"I lack required permissions for this action."); return; }
+            if (!mre.getMember().hasPermission(mre.getTextChannel(),uPerms)) { reject(mre,"User lacks required permissions."); return; }
 
         }
         else {
 
             // Reject if not usable in DMs
-            if (!dmCapable) { reject(e, "This command is not usable from DMs."); return; }
+            if (!dmCapable) { reject(mre, "This command is not usable from DMs."); return; }
 
         }
 
         // Run this command if it hasn't been rejected
-        this.runCommand(e, parseArgs(e.getMessage().getContentRaw()));
+        this.runCommand(mre, args);
 
     }
 
-    /**
-     * Breaks up the raw content string of a message into a list of string arguments
-     * @param s A string, specifically the raw content of a message event
-     * @return A list of string parameters
-     */
-    public List<String> parseArgs(String s) {
 
-        // Initialize list of args to eventually pass back
-        List<String> args = new ArrayList<String>();
-
-        // Split message content on spaces
-        String[] temp = s.split(" ");
-
-        // Return empty list if the string input only contains 1 item (as that would be "prefix;command", and isn't an arg)
-        if (temp.length==1) { return args; }
-
-        // Initialize a StringBuilder object for keeping tracking of multi-word args
-        StringBuilder sb = new StringBuilder();
-
-        // Loop through temp array starting a index 1 (to skip over the "prefix;command")
-        for (int i = 1; i<=argCount;i++) {
-
-            // Break/stop if i is greater than the number of possible arguments in the temp array
-            if (i > temp.length-1) { break; }
-
-            // If on the last expected argument, loop through any remaining members of temp and build as one multi-word arg
-            if (i == argCount) {
-
-                // If one argument remains, add it. Else attempt building multi-word arg
-                if (i == temp.length) {
-
-                    // Scrub tags from single args
-                    String argTemp = temp[i];
-                    if (argTemp.startsWith("<#")) { argTemp = argTemp.substring(2,argTemp.length()-1); }
-                    if (argTemp.startsWith("<@!")) { argTemp = argTemp.substring(3,argTemp.length()-1); }
-
-                }
-
-                // Loop through remaining values in temp Array to build multi-word arg
-                else {
-                    for (int x = i; x<temp.length; x++) {
-                        sb.append(temp[x]);
-                        if (x != temp.length - 1) { sb.append(" "); }
-                    }
-
-                    // Build/add StringerBuilder to args list
-                    args.add(sb.toString());
-                    sb = new StringBuilder();
-                }
-            }
-
-            // If item [i] starts with ", treat it as the start of a multi-word argument
-            else if (temp[i].startsWith("\"")) {
-
-                int counter = 0;
-
-                // Loop until either and end quote is found or we reach the end of the temp array
-                while (!temp[i+counter].endsWith("\"" ) && i+1+counter < temp.length) {
-
-                    // Add this item to the StringBuilder, with a space after. Then increment counter
-                    sb.append(temp[i+counter].replace("\"",""));
-                    sb.append(" ");
-                    counter += 1;
-
-                }
-
-                // The last item will not have been appended, so append it
-                sb.append(temp[i+counter].replace("\"",""));
-
-                // Add counter to i to skip ahead counter number of elements in temp Array. Build/add arg to list, reset StringBuilder
-                i+=(counter);
-                args.add(sb.toString());
-                sb = new StringBuilder();
-
-            }
-
-            // Default case, try to add single argument. Scrub user/channel tags from single args
-            else {
-
-                try {
-                    String argTemp = temp[i];
-                    if (argTemp.startsWith("<#")) { argTemp = argTemp.substring(2,argTemp.length()-1); }
-                    if (argTemp.startsWith("<@!")) { argTemp = argTemp.substring(3,argTemp.length()-1); }
-                    args.add(argTemp);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-
-        return args;
-
-    }
 
     /**
      * Add an alias to the existing list of aliases.

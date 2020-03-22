@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Date;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.Gson;
 
@@ -37,6 +36,7 @@ public class Configuration {
         try {
             loadConfig();
         } catch (Exception e) { ex = e; }
+
     }
 
     /**
