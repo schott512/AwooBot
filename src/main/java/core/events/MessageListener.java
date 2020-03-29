@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class MessageListener extends ListenerAdapter {
 
     private String defaultPrefix = Configuration.defaultPrefix;
-    private static CommandHandler comHandler = new CommandHandler();
+    private static final CommandHandler comHandler = new CommandHandler();
 
     /**
      * Overrides the default onMessageReceived from the JDA. Listens for received messages.
@@ -30,7 +30,7 @@ public class MessageListener extends ListenerAdapter {
 
         // Check if content refers to our bot. If it does, invoke the command handler
         if(content.startsWith(defaultPrefix)) {
-            comHandler.invokeHandler(cName, mre);
+            comHandler.invoke(cName, mre);
         }
     }
 }

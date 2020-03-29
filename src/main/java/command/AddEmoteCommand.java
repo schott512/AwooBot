@@ -24,7 +24,7 @@ public class AddEmoteCommand extends Command {
         this.uPerms = new Permission[]{Permission.MANAGE_EMOTES};
         this.argCount = 2;
         this.helpText = "Adds an emote to the current guild.";
-        this.args = "<emote|attachment> <newEmoteName>";
+        this.args = "<emote|attachment> <newEmoteName>\\*";
 
     }
 

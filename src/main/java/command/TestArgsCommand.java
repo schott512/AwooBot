@@ -28,7 +28,7 @@ public class TestArgsCommand extends Command {
         this.dmCapable = true;
         this.guildCapable = false;
         this.helpText = "Takes anything and returns the arguments it parsed, attachments, emotes from the message + extra API info.";
-        this.args = "Literally whatever you send it lol. Up to 100 things.";
+        this.args = "<up to 100 args>\\*";
 
     }
 
@@ -46,6 +46,7 @@ public class TestArgsCommand extends Command {
         eb.setColor(this.color);
         eb.setTitle("Test Args/API results for message id " + e.getMessage().getId());
         eb.setFooter("Latency: " + dif.toString() + "ms");
+        eb.addField("Message ID", e.getMessageId(),true);
 
         // Loop through each string arg, keeping count and adding them as fields to the embed
         int count = 0;
@@ -75,7 +76,7 @@ public class TestArgsCommand extends Command {
         }
 
         // Reply with embed after building
-        reply(e,eb.build());
+        reply(e,eb.build(),false);
 
     }
 

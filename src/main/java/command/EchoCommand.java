@@ -22,7 +22,7 @@ public class EchoCommand extends Command {
         this.uPerms = new Permission[]{Permission.MESSAGE_WRITE};
         this.argCount = 2;
         this.helpText = "This command repeats <content> in <channelID>.";
-        this.args = "<channelID> <content>";
+        this.args = "<channelID>\\* <content>";
 
     }
 

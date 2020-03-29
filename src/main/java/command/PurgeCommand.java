@@ -21,7 +21,7 @@ public class PurgeCommand extends Command {
         this.bPerms = new Permission[]{Permission.MESSAGE_MANAGE};
         this.uPerms = new Permission[]{Permission.MESSAGE_MANAGE};
         this.argCount = 2;
-        this.args = "<userID> <num>";
+        this.args = "<userID>\\* <num>\\*";
         this.helpText = "This command purges all messages from <userID> in the last <num> messages, or all of the last <num> messages.";
 
     }

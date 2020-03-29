@@ -37,7 +37,7 @@ public class AboutCommand extends Command {
         eb.setFooter("Thanks for using AwooBot!!!");
 
         // Reply with embed after building
-        reply(e,eb.build());
+        reply(e,eb.build(),false);
 
     }
 

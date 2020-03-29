@@ -12,8 +12,8 @@ import java.util.List;
 public class CommandHandler {
 
     // Array containing objects of every command
-    private static Command[] cList = {new AboutCommand(), new PingCommand(), new EchoCommand(), new PurgeCommand(),
-                                      new TestArgsCommand(), new AddEmoteCommand()};
+    public static Command[] cList = {new AboutCommand(), new PingCommand(), new EchoCommand(), new PurgeCommand(),
+                                      new TestArgsCommand(), new AddEmoteCommand(), new HelpCommand()};
 
     public CommandHandler() {
 
@@ -22,15 +22,17 @@ public class CommandHandler {
     /**
      * Sorts out which command to send an input to, as well as parses out any arguments
      */
-    public void invokeHandler(String cName, MessageReceivedEvent mre) {
+    public void invoke(String cName, MessageReceivedEvent mre) {
 
         // Loop through known commands to see if any are referenced by the message
         for (Command c : cList) {
 
-            // If this is the correct command, parse arguments from the message (using the commands argCount) and call it
-            if (c.referencedBy(cName)) {c.execute(mre, parseArgs(mre.getMessage().getContentRaw(),c.argCount));}
+            // If this is the correct command, parse arguments from the message (using the commands argCount) and call it and return
+            if (c.referencedBy(cName)) {c.execute(mre, parseArgs(mre.getMessage().getContentRaw(),c.argCount)); return; }
 
         }
+
+        cList[0].reject(mre, "No command matches that name or alias.");
 
     }
 

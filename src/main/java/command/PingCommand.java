@@ -34,7 +34,7 @@ public class PingCommand extends Command {
         eb.addField("Latency", dif.toString() + " ms", true);
 
         // Reply with the embed (after building)
-        reply(e,eb.build());
+        reply(e,eb.build(),false);
 
     }
 

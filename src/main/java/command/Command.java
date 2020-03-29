@@ -135,6 +135,22 @@ public abstract class Command {
 
     }
 
+    /**
+     * Builds a short string demonstrating usage of the command
+     * @return String which contains expected arguments and command format
+     */
+    public String getUsage() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{prefix};");
+        sb.append(keyName);
+        sb.append(" ");
+        sb.append(args);
+
+        return sb.toString();
+
+    }
+
     public void reject(MessageReceivedEvent mre, String reason) {
 
         // Build a generic error message and reply with it
@@ -143,7 +159,7 @@ public abstract class Command {
         msgBuild.append("Failed to execute command. ");
         msgBuild.append(reason);
         msgBuild.append(" :x:");
-        reply(mre,msgBuild.build());
+        reply(mre, msgBuild.build(), false);
 
     }
 
@@ -151,26 +167,72 @@ public abstract class Command {
      * Function that replies to a message with a CharSequence.
      * @param mre MessageReceivedEvent to respond to
      * @param content CharSequence containing content of the reply
+     * @param asDM Boolean value, if true the response is sent in a DM to the calling user
      */
-    protected void reply(MessageReceivedEvent mre, CharSequence content) {
-        mre.getChannel().sendMessage(content).queue();
+    protected void reply(MessageReceivedEvent mre, CharSequence content, boolean asDM) {
+
+        if (asDM){
+            // If sent from a guild, open a private channel. Otherwise send in same channel
+            if (mre.isFromGuild()) {
+                // Send message to users DMs
+                mre.getMember().getUser().openPrivateChannel().queue((channel) -> {
+                    channel.sendMessage(content).queue();
+                });
+            }
+            else {
+                mre.getChannel().sendMessage(content).queue();
+            }
+        }
+        else { mre.getChannel().sendMessage(content).queue(); }
+
     }
 
     /**
      * Function that replies to a message with an Embed
      * @param mre MessageReceivedEvent to respond to
      * @param content Embed containing content of the reply
+     * @param asDM Boolean value, if true the response is sent in a DM to the calling user
      */
-    protected void reply(MessageReceivedEvent mre, MessageEmbed content) {
-        mre.getChannel().sendMessage(content).queue();
+    protected void reply(MessageReceivedEvent mre, MessageEmbed content, boolean asDM) {
+
+        if (asDM){
+            // If sent from a guild, open a private channel. Otherwise send in same channel
+            if (mre.isFromGuild()) {
+                // Send message to users DMs
+                mre.getMember().getUser().openPrivateChannel().queue((channel) -> {
+                    channel.sendMessage(content).queue();
+                });
+            }
+            else {
+                mre.getChannel().sendMessage(content).queue();
+            }
+        }
+        else { mre.getChannel().sendMessage(content).queue(); }
+
+
     }
 
     /**
      * Function that replies to a message with a Message.
      * @param mre MessageReceivedEvent to respond to
      * @param content Message containing content of the reply
+     * @param asDM Boolean value, if true the response is sent in a DM to the calling user
      */
-    protected void reply(MessageReceivedEvent mre, Message content) {
-        content.getChannel().sendMessage(content).queue();
+    protected void reply(MessageReceivedEvent mre, Message content, boolean asDM) {
+
+        if (asDM){
+            // If sent from a guild, open a private channel. Otherwise send in same channel
+            if (mre.isFromGuild()) {
+                // Send message to users DMs
+                mre.getMember().getUser().openPrivateChannel().queue((channel) -> {
+                    channel.sendMessage(content).queue();
+                });
+            }
+            else {
+                mre.getChannel().sendMessage(content).queue();
+            }
+        }
+        else { mre.getChannel().sendMessage(content).queue(); }
     }
+
 }
