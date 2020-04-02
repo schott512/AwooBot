@@ -1,6 +1,7 @@
 package command;
 
 import core.Configuration;
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -52,35 +53,34 @@ public abstract class Command {
     protected int argCount = 0;
 
     // An abstract function to run command. This will be overridden by specific implementations of the class.
-    protected abstract void runCommand(MessageReceivedEvent e, List<String> args);
+    protected abstract void runCommand(CommandReceivedEvent cre);
 
     /**
      * Function to check whether the command may be run by the calling user in the calling guild/dm and then
      * executes the command by calling the runCommand() function.
-     * @param mre The MessageEvent which triggered this command
+     * @param cre The MessageEvent which triggered this command
      */
-    public void execute(MessageReceivedEvent mre, List<String> args) {
+    public void execute(CommandReceivedEvent cre, List<String> args) {
 
         // Check if the source of the command is a guild
-        if (mre.isFromGuild()) {
-
+        if (cre.isFromGuild()) {
             // Reject if this command can't be used in a guild
-            if (!guildCapable) { reject(mre,"Command may not be used in guilds."); return; }
+            if (!guildCapable) { cre.reject("Command may not be used in guilds."); return; }
 
             // Reject if permissions within guild are not proper
-            if (!mre.getGuild().getSelfMember().hasPermission(mre.getTextChannel(),bPerms)){ reject(mre,"I lack required permissions for this action."); return; }
-            if (!mre.getMember().hasPermission(mre.getTextChannel(),uPerms)) { reject(mre,"User lacks required permissions."); return; }
+            if (!cre.getGuild().getSelfMember().hasPermission(cre.getTextChannel(),bPerms)){ cre.reject("I lack required permissions for this action."); return; }
+            if (!cre.getMember().hasPermission(cre.getTextChannel(),uPerms)) { cre.reject("User lacks required permissions."); return; }
 
         }
         else {
 
             // Reject if not usable in DMs
-            if (!dmCapable) { reject(mre, "This command is not usable from DMs."); return; }
+            if (!dmCapable) { cre.reject("This command is not usable from DMs."); return; }
 
         }
 
         // Run this command if it hasn't been rejected
-        this.runCommand(mre, args);
+        this.runCommand(cre);
 
     }
 
@@ -142,97 +142,13 @@ public abstract class Command {
     public String getUsage() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("{prefix};");
+        sb.append("{prefix}");
         sb.append(keyName);
         sb.append(" ");
         sb.append(args);
 
         return sb.toString();
 
-    }
-
-    public void reject(MessageReceivedEvent mre, String reason) {
-
-        // Build a generic error message and reply with it
-        MessageBuilder msgBuild = new MessageBuilder();
-        msgBuild.append(":x: ");
-        msgBuild.append("Failed to execute command. ");
-        msgBuild.append(reason);
-        msgBuild.append(" :x:");
-        reply(mre, msgBuild.build(), false);
-
-    }
-
-    /**
-     * Function that replies to a message with a CharSequence.
-     * @param mre MessageReceivedEvent to respond to
-     * @param content CharSequence containing content of the reply
-     * @param asDM Boolean value, if true the response is sent in a DM to the calling user
-     */
-    protected void reply(MessageReceivedEvent mre, CharSequence content, boolean asDM) {
-
-        if (asDM){
-            // If sent from a guild, open a private channel. Otherwise send in same channel
-            if (mre.isFromGuild()) {
-                // Send message to users DMs
-                mre.getMember().getUser().openPrivateChannel().queue((channel) -> {
-                    channel.sendMessage(content).queue();
-                });
-            }
-            else {
-                mre.getChannel().sendMessage(content).queue();
-            }
-        }
-        else { mre.getChannel().sendMessage(content).queue(); }
-
-    }
-
-    /**
-     * Function that replies to a message with an Embed
-     * @param mre MessageReceivedEvent to respond to
-     * @param content Embed containing content of the reply
-     * @param asDM Boolean value, if true the response is sent in a DM to the calling user
-     */
-    protected void reply(MessageReceivedEvent mre, MessageEmbed content, boolean asDM) {
-
-        if (asDM){
-            // If sent from a guild, open a private channel. Otherwise send in same channel
-            if (mre.isFromGuild()) {
-                // Send message to users DMs
-                mre.getMember().getUser().openPrivateChannel().queue((channel) -> {
-                    channel.sendMessage(content).queue();
-                });
-            }
-            else {
-                mre.getChannel().sendMessage(content).queue();
-            }
-        }
-        else { mre.getChannel().sendMessage(content).queue(); }
-
-
-    }
-
-    /**
-     * Function that replies to a message with a Message.
-     * @param mre MessageReceivedEvent to respond to
-     * @param content Message containing content of the reply
-     * @param asDM Boolean value, if true the response is sent in a DM to the calling user
-     */
-    protected void reply(MessageReceivedEvent mre, Message content, boolean asDM) {
-
-        if (asDM){
-            // If sent from a guild, open a private channel. Otherwise send in same channel
-            if (mre.isFromGuild()) {
-                // Send message to users DMs
-                mre.getMember().getUser().openPrivateChannel().queue((channel) -> {
-                    channel.sendMessage(content).queue();
-                });
-            }
-            else {
-                mre.getChannel().sendMessage(content).queue();
-            }
-        }
-        else { mre.getChannel().sendMessage(content).queue(); }
     }
 
 }

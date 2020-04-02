@@ -3,11 +3,12 @@ package command;
 import java.util.Date;
 import java.util.List;
 import core.Configuration;
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message.Attachment;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 
 
 /**
@@ -33,20 +34,23 @@ public class TestArgsCommand extends Command {
     }
 
     @Override
-    public void runCommand(MessageReceivedEvent e, List<String> args) {
+    public void runCommand(CommandReceivedEvent cre) {
+
+        // Grab args
+        List<String> args = cre.args;
 
         // Calculate ping, grab all attachments + emotes, and initialize an empty EmbedBuilder
-        Long dif = (new Date().getTime()) - Date.from(e.getMessage().getTimeCreated().toInstant()).getTime();
-        List<Attachment> attachments = e.getMessage().getAttachments();
-        List<Emote> emojis = e.getMessage().getEmotes();
+        Long dif = (new Date().getTime()) - Date.from(cre.getMessage().getTimeCreated().toInstant()).getTime();
+        List<Attachment> attachments = cre.getMessage().getAttachments();
+        List<Emote> emojis = cre.getMessage().getEmotes();
         EmbedBuilder eb = new EmbedBuilder();
 
         // Build embed using some basic information about this specific call
         eb.setThumbnail(Configuration.imageLink);
         eb.setColor(this.color);
-        eb.setTitle("Test Args/API results for message id " + e.getMessage().getId());
+        eb.setTitle("Test Args/API results for message id " + cre.getMessage().getId());
         eb.setFooter("Latency: " + dif.toString() + "ms");
-        eb.addField("Message ID", e.getMessageId(),true);
+        eb.addField("Message ID", cre.getMessageId(),true);
 
         // Loop through each string arg, keeping count and adding them as fields to the embed
         int count = 0;
@@ -76,7 +80,7 @@ public class TestArgsCommand extends Command {
         }
 
         // Reply with embed after building
-        reply(e,eb.build(),false);
+        cre.reply(eb.build(),false);
 
     }
 

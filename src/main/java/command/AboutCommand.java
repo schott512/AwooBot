@@ -1,8 +1,8 @@
 package command;
 
 import core.Configuration;
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.util.List;
 
@@ -25,7 +25,10 @@ public class AboutCommand extends Command {
     }
 
     @Override
-    public void runCommand(MessageReceivedEvent e, List<String> args) {
+    public void runCommand(CommandReceivedEvent cre) {
+
+        // Grab args
+        List<String> args = cre.args;
 
         // Build Embed with some basic details
         EmbedBuilder eb = new EmbedBuilder();
@@ -37,7 +40,7 @@ public class AboutCommand extends Command {
         eb.setFooter("Thanks for using AwooBot!!!");
 
         // Reply with embed after building
-        reply(e,eb.build(),false);
+        cre.reply(eb.build(),false);
 
     }
 

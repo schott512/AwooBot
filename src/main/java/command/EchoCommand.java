@@ -1,10 +1,10 @@
 package command;
 
 import java.util.List;
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 /**
  * Echo command object. Contains the information for echoing an input.
@@ -27,7 +27,10 @@ public class EchoCommand extends Command {
     }
 
     @Override
-    public void runCommand(MessageReceivedEvent e, List<String> args){
+    public void runCommand(CommandReceivedEvent cre){
+
+        // Grab args
+        List<String> args = cre.args;
 
         // Some strings to hold Channel ID and the message to echo, empty channel var
         String chID = "";
@@ -35,16 +38,16 @@ public class EchoCommand extends Command {
         MessageChannel ch;
 
         // Figure out how many args were passed, assign chID and echo message
-        if (args.size()==0) { reject(e,"Lacking sufficient arguments."); }
-        else if (args.size()==1) { chID = e.getChannel().getId(); echo = args.get(0);}
+        if (args.size()==0) { cre.reject("Lacking sufficient arguments."); }
+        else if (args.size()==1) { chID = cre.getChannel().getId(); echo = args.get(0);}
         else if (args.size()==2) { chID = args.get(0); echo = args.get(1);}
-        else { reject(e,"Too many arguments."); }
+        else { cre.reject("Too many arguments."); }
 
         // Check if channel ID is a valid long. If not, default to channel echo was called from
-        try { Long l = Long.parseLong(chID); ch=e.getGuild().getTextChannelById(chID);}
+        try { Long l = Long.parseLong(chID); ch = cre.getGuild().getTextChannelById(chID);}
         catch (Exception ex) {
-            chID = e.getChannel().getId();
-            ch=e.getGuild().getTextChannelById(chID);
+            chID = cre.getChannel().getId();
+            ch = cre.getGuild().getTextChannelById(chID);
             echo = args.get(0) + " " + echo;
         }
 

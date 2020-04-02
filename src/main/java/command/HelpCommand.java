@@ -2,9 +2,10 @@ package command;
 
 import java.util.List;
 
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 
 public class HelpCommand extends Command{
 
@@ -23,9 +24,12 @@ public class HelpCommand extends Command{
     }
 
     @Override
-    public void runCommand(MessageReceivedEvent mre, List<String> args) {
+    public void runCommand(CommandReceivedEvent cre) {
 
         Command referencedCommand = null;
+
+        // Grab args
+        List<String> args = cre.args;
 
         // Set up an EmbedBuilder
         EmbedBuilder eb = new EmbedBuilder();
@@ -48,12 +52,12 @@ public class HelpCommand extends Command{
 
                 // Reject/return if no match
                 if (referencedCommand == null) {
-                    reject(mre, "No command with that name can be found.");
+                    cre.reject("No command with that name can be found.");
                     return;
                 }
 
                 // Add stuff to the embedBuilder
-                eb.setTitle(commandName + " help");
+                eb.setTitle("Help for " + commandName);
                 eb.addField("Description", referencedCommand.helpText, true);
                 if (referencedCommand.argCount != 0) { eb.addField("Expected args", referencedCommand.args, true); }
                 eb.addField("Usage", referencedCommand.getUsage(), true);
@@ -70,7 +74,7 @@ public class HelpCommand extends Command{
                 }
 
                 // Build and send EB, return
-                reply(mre,eb.build(),true);
+                cre.reply(eb.build(),true);
                 return;
             }
 
@@ -84,7 +88,7 @@ public class HelpCommand extends Command{
 
         }
 
-        reply(mre,eb.build(),false);
+        cre.reply(eb.build(),false);
 
     }
 

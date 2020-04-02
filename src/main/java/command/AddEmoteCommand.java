@@ -3,8 +3,9 @@ package command;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Icon;
@@ -29,11 +30,14 @@ public class AddEmoteCommand extends Command {
     }
 
     @Override
-    public void runCommand(MessageReceivedEvent e, List<String> args) {
+    public void runCommand(CommandReceivedEvent cre) {
+
+        // Grab args
+        List<String> args = cre.args;
 
         // Grab any emotes/attachments that may be present, initialize strings to hold the emotes image URL and name
-        List<Emote> emotes = e.getMessage().getEmotes();
-        List<Attachment> attachments = e.getMessage().getAttachments();
+        List<Emote> emotes = cre.getMessage().getEmotes();
+        List<Attachment> attachments = cre.getMessage().getAttachments();
         String newEmoteName = "";
         String newEmote = "";
 
@@ -41,7 +45,7 @@ public class AddEmoteCommand extends Command {
         InputStream tempStream = null;
 
         // If more than one image/emote has been provided, reject
-        if (emotes.size() + attachments.size() != 1) { reject(e,"Too many attachments and/or emotes!"); return; }
+        if (emotes.size() + attachments.size() != 1) { cre.reject("Too many attachments and/or emotes!"); return; }
 
         // If exactly 1 attachment exists, add it as an emote
         if (attachments.size() == 1) {
@@ -52,7 +56,7 @@ public class AddEmoteCommand extends Command {
                 newEmoteName = temp.getFileName().replace("."+ temp.getFileExtension(), "");
 
                 // If the attachment is an image, assign newEmote to its string URL
-                if (temp.isImage()) { newEmote = temp.getUrl(); } else { reject(e, "No image given."); return; }
+                if (temp.isImage()) { newEmote = temp.getUrl(); } else { cre.reject("No image given."); return; }
             }
 
             // If 1 arg exists, use it as the name
@@ -60,11 +64,11 @@ public class AddEmoteCommand extends Command {
                 newEmoteName = args.get(0);
 
                 // If the attachment is an image, assign newEmote to its string URL
-                if (temp.isImage()) { newEmote = temp.getUrl(); } else { reject(e, "No image given."); return; }
+                if (temp.isImage()) { newEmote = temp.getUrl(); } else { cre.reject("No image given."); return; }
             }
 
             // Reject if some other number of args is given
-            else { reject(e, "Too many arguments!"); return; }
+            else { cre.reject("Too many arguments!"); return; }
 
         }
 
@@ -86,14 +90,14 @@ public class AddEmoteCommand extends Command {
             }
 
             // Reject if some other number of args is given
-            else { reject(e, "Too many arguments!"); return; }
+            else { cre.reject("Too many arguments!"); return; }
 
         }
 
         // Attempt to upload. Open an InputStream to the image URL and createEmote in guild
         try {
             tempStream = new URL(newEmote).openStream();
-            e.getGuild().createEmote(newEmoteName, Icon.from(tempStream)).queue();
+            cre.getGuild().createEmote(newEmoteName, Icon.from(tempStream)).queue();
         } catch (Exception ex) { System.out.println(ex.getMessage()); }
 
     }

@@ -2,10 +2,11 @@ package command;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 /**
  * Purge command object. Contains the information for executing a message purge.
@@ -27,7 +28,10 @@ public class PurgeCommand extends Command {
     }
 
     @Override
-    public void runCommand(MessageReceivedEvent e, List<String> args) {
+    public void runCommand(CommandReceivedEvent cre) {
+
+        // Grab args
+        List<String> args = cre.args;
 
         // Default number of messages is 101 (1 for the calling message, 100 to go back 100). Initialize member/message list
         int numMessages = 101;
@@ -36,7 +40,7 @@ public class PurgeCommand extends Command {
 
         // If atleast one argument exists, attempt to fetch Member. If failed, no valid user was provided
         if (args.size() > 0) {
-            try { u = e.getGuild().getMemberById(args.get(0)); } catch (Exception ex) { System.out.println(ex.getMessage()); }
+            try { u = cre.getGuild().getMemberById(args.get(0)); } catch (Exception ex) { System.out.println(ex.getMessage()); }
         }
 
         // No user was retrieved and at least 1 arg exists, or if at least 2 args exist
@@ -54,7 +58,7 @@ public class PurgeCommand extends Command {
             // If more than 100 are needed, grab 100 this iteration and append all to message list
             int tempNum;
             if (n > 100) {tempNum = 100;} else { tempNum = n; }
-            m.addAll(m.size(), e.getChannel().getHistory().retrievePast(tempNum).complete());
+            m.addAll(m.size(), cre.getChannel().getHistory().retrievePast(tempNum).complete());
         }
 
         // if Member not null, search through message list and remove any that don't belong to that user
@@ -69,7 +73,7 @@ public class PurgeCommand extends Command {
         }
 
         // Purge messages in message list
-        e.getChannel().purgeMessages(m);
+        cre.getChannel().purgeMessages(m);
 
     }
 }
