@@ -54,6 +54,6 @@ public class EchoCommand extends Command {
         // Build and send message
         MessageBuilder msg = new MessageBuilder();
         msg.append(echo);
-        msg.sendTo(ch).queue();
+        if (ch != null) { msg.sendTo(ch).queue(); } else { cre.reject("Not a valid channel within this guild."); }
     }
 }

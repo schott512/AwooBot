@@ -2,10 +2,7 @@ package command;
 
 import core.Configuration;
 import core.events.CommandReceivedEvent;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.Color;
 import java.util.List;

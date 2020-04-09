@@ -3,7 +3,6 @@ package command;
 import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.EmbedBuilder;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,10 +30,9 @@ public class PingCommand extends Command {
 
         // Build an embed to respond with
         EmbedBuilder eb = new EmbedBuilder();
-        Long dif = (new Date().getTime()) - Date.from(cre.getMessage().getTimeCreated().toInstant()).getTime();
         eb.setColor(this.color);
         eb.setTitle("Pong!");
-        eb.addField("Latency", dif.toString() + " ms", true);
+        eb.addField("Latency", cre.getJDA().getGatewayPing() + "ms", true);
 
         // Reply with the embed (after building)
         cre.reply(eb.build(),false);

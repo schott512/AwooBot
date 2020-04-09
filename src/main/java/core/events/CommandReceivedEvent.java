@@ -107,6 +107,7 @@ public class CommandReceivedEvent {
         }
     }
 
+
     // Just some functions so that using a CommandReceivedEvent appears identical to using a MessageReceivedEvent
     // Basically make sure the MessageReceivedEvent's stuff is still accessible
 

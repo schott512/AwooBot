@@ -3,6 +3,7 @@ package core.listeners;
 import command.*;
 import core.Configuration;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
@@ -32,5 +33,14 @@ public class MessageListener extends ListenerAdapter {
         if(content.startsWith(defaultPrefix)) {
             comHandler.invoke(cName, mre);
         }
+    }
+
+    /**
+     * Overrides the default onMessageReactionAdd from the JDA. Listens for received messages.
+     * @param mrae MessageReactionAddEvent that triggered this listener
+     */
+    @Override
+    public void onMessageReactionAdd(MessageReactionAddEvent mrae) {
+
     }
 }

@@ -1,6 +1,5 @@
 package command;
 
-import java.util.Date;
 import java.util.List;
 import core.Configuration;
 import core.events.CommandReceivedEvent;
@@ -27,7 +26,7 @@ public class TestArgsCommand extends Command {
         this.uPerms = new Permission[]{Permission.MESSAGE_WRITE};
         this.argCount = 100;
         this.dmCapable = true;
-        this.guildCapable = false;
+        this.guildCapable = true;
         this.helpText = "Takes anything and returns the arguments it parsed, attachments, emotes from the message + extra API info.";
         this.args = "<up to 100 args>\\*";
 
@@ -39,8 +38,7 @@ public class TestArgsCommand extends Command {
         // Grab args
         List<String> args = cre.args;
 
-        // Calculate ping, grab all attachments + emotes, and initialize an empty EmbedBuilder
-        Long dif = (new Date().getTime()) - Date.from(cre.getMessage().getTimeCreated().toInstant()).getTime();
+        // Grab all attachments + emotes, and initialize an empty EmbedBuilder
         List<Attachment> attachments = cre.getMessage().getAttachments();
         List<Emote> emojis = cre.getMessage().getEmotes();
         EmbedBuilder eb = new EmbedBuilder();
@@ -49,7 +47,7 @@ public class TestArgsCommand extends Command {
         eb.setThumbnail(Configuration.imageLink);
         eb.setColor(this.color);
         eb.setTitle("Test Args/API results for message id " + cre.getMessage().getId());
-        eb.setFooter("Latency: " + dif.toString() + "ms");
+        eb.setFooter("Latency: " + cre.getJDA().getGatewayPing() + "ms");
         eb.addField("Message ID", cre.getMessageId(),true);
 
         // Loop through each string arg, keeping count and adding them as fields to the embed

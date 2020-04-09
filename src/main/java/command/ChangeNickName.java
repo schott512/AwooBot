@@ -26,14 +26,19 @@ public class ChangeNickName extends Command {
         // Grab args
         List<String> args = cre.args;
 
+        // String to hold new nickname
+        String nick = "";
+
         // Member object to hold targeted user
         Member m = null;
 
         // If there is one argument, set the target user to the calling user
-        if (args.size() == 1) { m = cre.getMember(); }
+        if (args.size() == 1) { m = cre.getMember(); nick = args.get(0); }
 
         // Otherwise grab the first argument and attempt to parse into a Member
         else {
+
+            nick = args.get(1);
 
             // Attempt to parse the user ID argument into a long, and then grab a user
             try {
@@ -44,7 +49,7 @@ public class ChangeNickName extends Command {
 
         }
 
-        m.modifyNickname(args.get(1)).queue();
+        m.modifyNickname(nick).queue();
 
     }
 }

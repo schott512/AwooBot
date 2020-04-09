@@ -47,7 +47,7 @@ public class CommandHandler {
         // CommandReceivedEvent for the calling MRE
         CommandReceivedEvent cre = new CommandReceivedEvent(mre, args);
 
-        if (com != null) { com.execute(cre, parseArgs(mre.getMessage().getContentRaw(),com.argCount)); }
+        if (com != null) { com.execute(cre, args); }
         else { cre.reject("No command matches that name or alias."); }
 
     }
