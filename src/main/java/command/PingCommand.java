@@ -19,11 +19,17 @@ public class PingCommand extends Command {
         this.aliases = new String[]{"P","Ping","p"};
         this.bPerms = new Permission[]{Permission.MESSAGE_WRITE};
         this.dmCapable = true;
+        this.commandType = "embed";
 
     }
 
+    /**
+     * @param cre The Event which triggered this command
+     * @param selfReply Boolean value. If true, this command execution may respond to the calling message directly.
+     * @return EmbedBuilder containing the response to the ping
+     */
     @Override
-    public void runCommand(CommandReceivedEvent cre) {
+    public Object runCommand(CommandReceivedEvent cre, boolean selfReply) {
 
         // Grab args
         List<String> args = cre.args;
@@ -35,7 +41,8 @@ public class PingCommand extends Command {
         eb.addField("Latency", cre.getJDA().getGatewayPing() + "ms", true);
 
         // Reply with the embed (after building)
-        cre.reply(eb.build(),false);
+        if (selfReply) { cre.reply(eb.build(),false); }
+        return eb;
 
     }
 

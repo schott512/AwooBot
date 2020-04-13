@@ -73,6 +73,8 @@ public class Configuration {
                 line = br.readLine();
             }
 
+            br.close();
+
             // Convert to JsonOjbect and grab necessary data. Replace quotes because GSON is silly and doesn't account for them..
             JsonObject configJSON = new Gson().fromJson(sb.toString(), JsonObject.class);
             botToken = configJSON.get("botToken").toString().replace("\"", "");

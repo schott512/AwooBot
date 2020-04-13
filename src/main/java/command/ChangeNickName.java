@@ -4,6 +4,7 @@ import java.util.List;
 import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class ChangeNickName extends Command {
 
@@ -17,11 +18,17 @@ public class ChangeNickName extends Command {
         this.argCount = 2;
         this.args = "<userID>* <nickname>";
         this.helpText = "This command changes sets the nickname for <userID>. If no ID provided, sets senders nickname.";
+        this.commandType = "modify";
 
     }
 
+    /**
+     * @param cre The Event which triggered this command
+     * @param selfReply Boolean value. If true, this command execution may respond to the calling message directly.
+     * @return Boolean value. True if the request to change nick was made. False otherwise.
+     */
     @Override
-    public void runCommand(CommandReceivedEvent cre) {
+    public Object runCommand(CommandReceivedEvent cre, boolean selfReply) {
 
         // Grab args
         List<String> args = cre.args;
@@ -45,11 +52,15 @@ public class ChangeNickName extends Command {
                 Long userID = Long.parseLong(args.get(0));
                 m = cre.getGuild().getMemberById(userID);
             }
-            catch (Exception e) { cre.reject("Invalid user."); return; }
+            catch (Exception e) { if (selfReply) { cre.reject("Invalid user."); } return false; }
 
         }
 
-        m.modifyNickname(nick).queue();
+        try {
+            m.modifyNickname(nick).queue();
+        }
+        catch (HierarchyException he) { cre.reject("That user is above me in the hierarchy."); return false; }
+        return true;
 
     }
 }

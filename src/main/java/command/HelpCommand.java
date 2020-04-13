@@ -20,11 +20,17 @@ public class HelpCommand extends Command{
         this.dmCapable = true;
         this.helpText = "Builds and returns the help info for a command.";
         this.args = "<commandName| -l>\\*";
+        this.commandType = "embed";
 
     }
 
+    /**
+     * @param cre The Event which triggered this command
+     * @param selfReply Boolean value. If true, this command execution may respond to the calling message directly.
+     * @return EmbedBuilder object containing the help info
+     */
     @Override
-    public void runCommand(CommandReceivedEvent cre) {
+    public Object runCommand(CommandReceivedEvent cre, boolean selfReply) {
 
         Command referencedCommand = null;
 
@@ -52,15 +58,14 @@ public class HelpCommand extends Command{
 
                 // Reject/return if no match
                 if (referencedCommand == null) {
-                    cre.reject("No command with that name can be found.");
-                    return;
+                    return cre.reject("No command with that name can be found.");
                 }
 
                 // Add stuff to the embedBuilder
                 eb.setTitle("Help for " + commandName);
                 eb.addField("Description", referencedCommand.helpText, true);
-                if (referencedCommand.argCount != 0) { eb.addField("Expected args", referencedCommand.args, true); }
-                eb.addField("Usage", referencedCommand.getUsage(), true);
+                if (referencedCommand.argCount != 0) { eb.addField("Expected args", referencedCommand.args, false); }
+                eb.addField("Usage", referencedCommand.getUsage(), false);
             }
 
             // -l was given, provide a list of all available commands in a DM to the user
@@ -74,8 +79,7 @@ public class HelpCommand extends Command{
                 }
 
                 // Build and send EB, return
-                cre.reply(eb.build(),true);
-                return;
+                if (selfReply) { cre.reply(eb.build(),true); return eb;}
             }
 
         }
@@ -88,7 +92,8 @@ public class HelpCommand extends Command{
 
         }
 
-        cre.reply(eb.build(),false);
+        if (selfReply) { cre.reply(eb.build(),false); }
+        return eb;
 
     }
 

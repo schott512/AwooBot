@@ -29,11 +29,17 @@ public class TestArgsCommand extends Command {
         this.guildCapable = true;
         this.helpText = "Takes anything and returns the arguments it parsed, attachments, emotes from the message + extra API info.";
         this.args = "<up to 100 args>\\*";
+        this.commandType = "embed";
 
     }
 
+    /**
+     * @param cre The Event which triggered this command
+     * @param selfReply Boolean value. If true, this command execution may respond to the calling message directly.
+     * @return EmbedBuilder containing the data of the arg test
+     */
     @Override
-    public void runCommand(CommandReceivedEvent cre) {
+    public Object runCommand(CommandReceivedEvent cre, boolean selfReply) {
 
         // Grab args
         List<String> args = cre.args;
@@ -78,7 +84,8 @@ public class TestArgsCommand extends Command {
         }
 
         // Reply with embed after building
-        cre.reply(eb.build(),false);
+        if (selfReply) { cre.reply(eb.build(),false); }
+        return eb;
 
     }
 

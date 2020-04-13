@@ -24,11 +24,17 @@ public class PurgeCommand extends Command {
         this.argCount = 2;
         this.args = "<userID>\\* <num>\\*";
         this.helpText = "This command purges all messages from <userID> in the last <num> messages, or all of the last <num> messages.";
+        this.commandType = "modify";
 
     }
 
+    /**
+     * @param cre The Event which triggered this command
+     * @param selfReply Boolean value. If true, this command execution may respond to the calling message directly.
+     * @return Boolean value. True if the request to mass delete was made (does not verify if it occurred successfully). False otherwise.
+     */
     @Override
-    public void runCommand(CommandReceivedEvent cre) {
+    public Object runCommand(CommandReceivedEvent cre, boolean selfReply) {
 
         // Grab args
         List<String> args = cre.args;
@@ -40,7 +46,7 @@ public class PurgeCommand extends Command {
 
         // If atleast one argument exists, attempt to fetch Member. If failed, no valid user was provided
         if (args.size() > 0) {
-            try { u = cre.getGuild().getMemberById(args.get(0)); } catch (Exception ex) { System.out.println(ex.getMessage()); }
+            try { u = cre.getGuild().getMemberById(args.get(0)); } catch (Exception ex) {}
         }
 
         // No user was retrieved and at least 1 arg exists, or if at least 2 args exist
@@ -48,8 +54,8 @@ public class PurgeCommand extends Command {
 
             // If at least 2 args exist, set num messages to the second arg (Member would have already been retrieved if exists)
             // Otherwise (only 1 arg exists), set num messages to the first arg (as no user would've been supplied
-            if (args.size() > 1) { try { numMessages = Integer.parseInt(args.get(1))+1; } catch (Exception ex) { System.out.println(ex.getMessage()); } }
-            else { try { numMessages = Integer.parseInt(args.get(0))+1; } catch (Exception ex) { System.out.println(ex.getMessage()); } }
+            if (args.size() > 1) { try { numMessages = Integer.parseInt(args.get(1))+1; } catch (Exception ex) { cre.reject("Invalid number of messages."); return false; }}
+            else { try { numMessages = Integer.parseInt(args.get(0))+1; } catch (Exception ex) { cre.reject("Invalid number of messages."); return false; }}
         }
 
         // Grab Messages in groups of 100 and add to message list (cannot grab more than 100 at a time through JDA)
@@ -59,6 +65,7 @@ public class PurgeCommand extends Command {
             int tempNum;
             if (n > 100) {tempNum = 100;} else { tempNum = n; }
             m.addAll(m.size(), cre.getChannel().getHistory().retrievePast(tempNum).complete());
+
         }
 
         // if Member not null, search through message list and remove any that don't belong to that user
@@ -74,6 +81,7 @@ public class PurgeCommand extends Command {
 
         // Purge messages in message list
         cre.getChannel().purgeMessages(m);
+        return true;
 
     }
 }

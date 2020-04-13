@@ -14,7 +14,9 @@ public class CommandHandler {
 
     // Array containing objects of every command
     public static Command[] cList = {new AboutCommand(), new PingCommand(), new EchoCommand(), new PurgeCommand(),
-                                      new TestArgsCommand(), new AddEmoteCommand(), new HelpCommand(), new ChangeNickName()};
+                                      new TestArgsCommand(), new AddEmoteCommand(), new HelpCommand(), new ChangeNickName(),
+                                      new EmbedCommand(), new EditEmbedCommand(), new ToDoCommand(), new UpdateToDoCommand(),
+                                    new PrefixCommand(), new ReactRoleCommand()};
 
     public CommandHandler() {
 
@@ -47,7 +49,8 @@ public class CommandHandler {
         // CommandReceivedEvent for the calling MRE
         CommandReceivedEvent cre = new CommandReceivedEvent(mre, args);
 
-        if (com != null) { com.execute(cre, args); }
+        // Execute command if found, allow it to respond
+        if (com != null) { com.execute(cre, true); }
         else { cre.reject("No command matches that name or alias."); }
 
     }
@@ -59,6 +62,9 @@ public class CommandHandler {
      * @return List of string arguments parsed from the input
      */
     private List<String> parseArgs(String s, int argCount) {
+
+        // Strip all instances of double spaces from args to avoid improper parsing
+        while (s.contains("  ")) { s = s.replace("  ", " "); }
 
         // Split message content on spaces
         String[] temp = s.split(" ");
@@ -73,15 +79,10 @@ public class CommandHandler {
         StringBuilder sb = new StringBuilder();
 
         // Loop through temp array starting a index 1 (to skip over the "prefix;command")
-        for (int i = 1; i <= argCount; i++) {
-
-            // Break/stop if i is greater than the number of possible arguments in the temp array
-            if (i > temp.length - 1) {
-                break;
-            }
+        for (int i = 1; i < temp.length; i++) {
 
             // If on the last expected argument, loop through any remaining members of temp and build as one multi-word arg
-            if (i == argCount) {
+            if (args.size()+1 == argCount) {
 
                 // If one argument remains, add it.
                 if (i == temp.length) {
@@ -110,6 +111,9 @@ public class CommandHandler {
                     args.add(sb.toString());
                     sb = new StringBuilder();
                 }
+
+                i = temp.length+1;
+
             }
 
             // If item [i] starts with ", treat it as the start of a multi-word argument

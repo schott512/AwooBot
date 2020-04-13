@@ -7,8 +7,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.w3c.dom.Text;
 
+/**
+ * CommandReceivedEvent class. This class is a wrapper for a MessageReceivedEvent, it is created when a command is received.
+ * @Author Ember (schott512)
+ */
 public class CommandReceivedEvent {
 
     // The MessageReceivedEvent this object is built around
@@ -28,7 +31,7 @@ public class CommandReceivedEvent {
      * Responds to message with a failure reason.
      * @param reason
      */
-    public void reject(String reason) {
+    public String reject(String reason) {
 
         // Build a generic error message and reply with it
         MessageBuilder msgBuild = new MessageBuilder();
@@ -38,6 +41,8 @@ public class CommandReceivedEvent {
         msgBuild.append(" :x:");
         reply(msgBuild.build(), false);
 
+        return "Failed to execute command. " + reason;
+
     }
 
     /**
@@ -45,7 +50,7 @@ public class CommandReceivedEvent {
      * @param content CharSequence containing content of the reply
      * @param asDM Boolean value, if true the response is sent in a DM to the calling user
      */
-    public void reply(CharSequence content, boolean asDM) {
+    public CharSequence reply(CharSequence content, boolean asDM) {
 
         if (asDM){
             // If sent from a guild, open a private channel. Otherwise send in same channel
@@ -60,6 +65,8 @@ public class CommandReceivedEvent {
             }
         }
         else { mre.getChannel().sendMessage(content).queue(); }
+
+        return content;
 
     }
 
@@ -68,7 +75,7 @@ public class CommandReceivedEvent {
      * @param content Embed containing content of the reply
      * @param asDM Boolean value, if true the response is sent in a DM to the calling user
      */
-    public void reply(MessageEmbed content, boolean asDM) {
+    public MessageEmbed reply(MessageEmbed content, boolean asDM) {
 
         if (asDM){
             // If sent from a guild, open a private channel. Otherwise send in same channel
@@ -83,6 +90,8 @@ public class CommandReceivedEvent {
             }
         }
         else { mre.getChannel().sendMessage(content).queue(); }
+
+        return content;
     }
 
     /**
@@ -90,7 +99,7 @@ public class CommandReceivedEvent {
      * @param content Message containing content of the reply
      * @param asDM Boolean value, if true the response is sent in a DM to the calling user
      */
-    public void reply(Message content, boolean asDM) {
+    public Message reply(Message content, boolean asDM) {
 
         if (asDM) {
             // If sent from a guild, open a private channel. Otherwise send in same private channel
@@ -105,6 +114,9 @@ public class CommandReceivedEvent {
         } else {
             mre.getChannel().sendMessage(content).queue();
         }
+
+        return content;
+
     }
 
 
@@ -126,4 +138,7 @@ public class CommandReceivedEvent {
     public PrivateChannel getPrivateChannel() { return mre.getPrivateChannel(); }
     public long getResponseNumber() { return mre.getResponseNumber(); }
     public boolean isFromType(ChannelType type) { return mre.isFromType(type); }
+
+    // Method for retrieving entire MessageReceivedEvent
+    public MessageReceivedEvent getMRE() { return mre; }
 }

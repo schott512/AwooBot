@@ -2,6 +2,7 @@ package core;
 
 import core.listeners.GuildListener;
 import core.listeners.MessageListener;
+import data.DatabaseManager;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,11 +17,15 @@ public class AwooBot extends ListenerAdapter {
 
     private static Configuration configObj = new Configuration();
     private static WebhookLogManager logManager;
+    public static DatabaseManager dbManager;
 
     public static void main(String[] args) throws Exception {
 
         // If config failed to initialize, throw exception
         if (!configObj.isInitialized) { throw configObj.ex; }
+
+        // Initialize the database manager
+        dbManager = new DatabaseManager("AwooBot");
 
         // If logging desired, enable logManager
         logManager = new WebhookLogManager(configObj.webhookLogURL);

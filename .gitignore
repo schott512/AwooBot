@@ -2,4 +2,3 @@
 /.idea/
 out/
 settings.json
-src/main/java/data/DatabaseManager.java
