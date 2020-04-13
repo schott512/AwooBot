@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS Guilds (
+    id text PRIMARY KEY,
+    mod_role long,
+    prefix text
+);
+
+CREATE TABLE IF NOT EXISTS ReactRoles (
+    guild_id text NOT NULL,
+    message text NOT NULL,
+    emote text NOT NULL,
+    role text NOT NULL,
+    PRIMARY KEY(message, emote),
+    FOREIGN KEY(guild_id) REFERENCES Guilds(id)
+);
