@@ -45,7 +45,7 @@ public abstract class Command {
     protected Command[] subCommands = new Command[0];
 
     // Color for any Embeds this command builds (default to AwooBot's color)
-    protected Color color = Configuration.color;
+    protected Color color = Configuration.getColor();
 
     // Maximum number of expected arguments
     protected int argCount = 0;

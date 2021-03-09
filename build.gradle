@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:4.1.1_109'
+    compile 'net.dv8tion:JDA:4.2.0_228'
     compile group:'org.xerial', name:'sqlite-jdbc', version:'3.30.1'
     implementation 'com.google.code.gson:gson:2.8.6'
 }

@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class MessageListener extends ListenerAdapter {
 
-    private String defaultPrefix = Configuration.defaultPrefix;
+    private String defaultPrefix = Configuration.getDefaultPrefix();
     private static final CommandHandler comHandler = new CommandHandler();
 
     /**

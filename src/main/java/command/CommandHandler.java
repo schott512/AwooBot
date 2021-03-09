@@ -16,7 +16,7 @@ public class CommandHandler {
     public static Command[] cList = {new AboutCommand(), new PingCommand(), new EchoCommand(), new PurgeCommand(),
                                       new TestArgsCommand(), new AddEmoteCommand(), new HelpCommand(), new ChangeNickName(),
                                       new EmbedCommand(), new EditEmbedCommand(), new ToDoCommand(), new UpdateToDoCommand(),
-                                    new PrefixCommand(), new ReactRoleCommand()};
+                                    new PrefixCommand(), new ReactRoleCommand(), new AutoPostCommand()};
 
     public CommandHandler() {
 

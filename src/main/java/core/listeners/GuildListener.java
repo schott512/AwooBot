@@ -1,7 +1,6 @@
 package core.listeners;
 
 import core.AwooBot;
-import core.WebhookLogManager;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -16,7 +15,6 @@ public class GuildListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(@Nonnull GuildJoinEvent gje) {
 
-        WebhookLogManager.sendMessage("I joined a guild.");
         AwooBot.dbManager.newGuild(gje.getGuild().getId());
 
     }

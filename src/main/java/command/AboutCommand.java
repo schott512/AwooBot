@@ -43,8 +43,8 @@ public class AboutCommand extends Command {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(this.color);
         eb.setTitle("About AwooBot");
-        eb.setThumbnail(Configuration.imageLink);
-        eb.addField("Build Version", Configuration.build, false);
+        eb.setThumbnail(Configuration.getImageLink());
+        eb.addField("Build Version", Configuration.getBuild(), false);
         eb.addField("Author Github Username", "schott512", true);
         eb.setFooter("Thanks for using AwooBot!!!");
         eb.setDescription("!~ Awoo ~! They/Them Pronouns!\n" +

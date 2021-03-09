@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Object that stores all database data for a specific guild. Acts as a cache, so we're not making constant DB calls
+ * Object that stores all database data for a specific guild (Except for Autoposts as that's handled in its own class).
+ * Acts as a cache, so we're not making constant DB calls
  */
 public class GuildDBCache {
 

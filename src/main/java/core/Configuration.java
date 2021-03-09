@@ -17,18 +17,15 @@ import com.google.gson.Gson;
 public class Configuration {
 
     // Read from file
-    public static String botToken = null;
-    public static boolean writeLog = false;
-    public static String webhookLogURL = "";
-    public static String build = "";
-    public static Color color = new Color(255,255,255);
-    public static String imageLink = null;
-    public static String defaultPrefix = "awb;";
-    public static boolean isInitialized = false;
-    public static Exception ex = null;
-
-    // Calculated on startup
-    public static Date startTime = null;
+    private static String botToken = null;
+    private static boolean writeLog = false;
+    private static String build = "";
+    private static Color color = new Color(255,255,255);
+    private static String imageLink = null;
+    private static String defaultPrefix = "awb;";
+    private static boolean isInitialized = false;
+    private static Exception ex = null;
+    private static Date startTime;
 
     // Constructor. Look for and open the settings.JSON file.
     public Configuration() {
@@ -79,7 +76,6 @@ public class Configuration {
             JsonObject configJSON = new Gson().fromJson(sb.toString(), JsonObject.class);
             botToken = configJSON.get("botToken").toString().replace("\"", "");
             writeLog = configJSON.get("writeLog").getAsBoolean();
-            webhookLogURL = configJSON.get("webhookLogURL").toString().replace("\"", "");
             build = configJSON.get("buildVers").toString().replace("\"", "");
             String tempColor = configJSON.get("botColor").toString().replace("\"", "");
             imageLink = configJSON.get("imageLink").toString().replace("\"", "");
@@ -90,7 +86,6 @@ public class Configuration {
             //------------------------------------Exceptions Checks-----------------------------------------\\
 
             if (botToken.isEmpty()) { throw new Exception("Please insert bot token."); }
-            if (writeLog && webhookLogURL.isEmpty()) { throw new Exception("Please insert log URL."); }
             if (build.isEmpty()) { throw new Exception("Please specify build version."); }
             if (imageLink.isEmpty()) { throw new Exception("Please specify image location."); }
 
@@ -103,10 +98,21 @@ public class Configuration {
             if (!tempPrefix.isEmpty()) { defaultPrefix = tempPrefix; }
 
         } catch (IOException e) {
+            ex = e;
             e.printStackTrace();
             isInitialized = false;
         }
 
     }
+
+    //Getters for stuff
+    public static String getBotToken() { return botToken; }
+    public static String getBuild() { return build; }
+    public static String getImageLink() { return imageLink; }
+    public static String getDefaultPrefix() { return defaultPrefix; }
+    public static boolean isWriteLog() { return writeLog; }
+    public static boolean IsInitialized() { return isInitialized; }
+    public static Color getColor() { return color; }
+    public static Exception getEx() { return ex; }
 
 }

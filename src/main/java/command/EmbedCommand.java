@@ -19,7 +19,7 @@ public class EmbedCommand extends Command {
         this.uPerms = new Permission[]{Permission.MESSAGE_WRITE};
         this.argCount = 4;
         this.helpText = "Builds a simple embed in <channelID>.";
-        this.args = "<channelID> #<hexColor>\\* <title> <description>";
+        this.args = "<channelID> 0x<hexColor>\\* <title> <description>";
         this.commandType = "Embed";
 
     }
@@ -61,10 +61,10 @@ public class EmbedCommand extends Command {
         }
 
         // If color provided, parse it
-        if (args.get(1).startsWith("#")) {
+        if (args.get(1).startsWith("0x")) {
 
             try { color = Color.decode(args.get(1)); }
-            catch (Exception e) { cre.reject("Cannot parse provided color, please ensure #000000 format for color arg."); }
+            catch (Exception e) { cre.reject("Cannot parse provided color, please ensure 0x000000 format for color arg."); }
             eb.setTitle(args.get(2));
             eb.setDescription(args.get(3).replace("\\n", "\n"));
 

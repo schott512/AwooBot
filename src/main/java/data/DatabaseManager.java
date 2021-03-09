@@ -1,8 +1,13 @@
 package data;
 
+import core.autopost.AutoPost;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -48,9 +53,18 @@ public class DatabaseManager {
         String[] com_strings = sb.toString().split("\n\n");
 
         List<String> commands = Arrays.asList(com_strings);
-        dbObj.initializeDB(commands);
+
+        try {
+            dbObj.initializeDB(commands);
+        }
+        catch (Exception e) { e.printStackTrace(); }
 
     }
+
+    /**
+     * Toggles logging of database interactions for debug purposes
+     */
+    public void toggleLogging() {dbObj.toggleLogStatus();}
 
     /**
      * Updates a setting for a guild. If forceUpdate is true it will mirror the update to the database immediately,
@@ -275,4 +289,86 @@ public class DatabaseManager {
      * Moves a guild already in the cache to the front of the ordered list, indicating it has been recently used
      */
     private void refreshGuild(String gID) { order.remove(gID); order.add(0, gID); }
+
+    /**
+     * Fetches autoposts scheduled for the next 15 minutes from the DB
+     * @return
+     */
+    public List<AutoPost> fetchUpcomingAP() {
+
+        List<AutoPost> fetchResults = new ArrayList<>();
+
+        // Search db for autoposts whose time is between now and 15 minutes from now
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        String lowerLimit = now.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm"));
+        now = now.plusMinutes(15);
+        String upperLimit = now.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm"));
+        String whereCondition = "post_time >= '" + lowerLimit + "' AND post_time <= '" + upperLimit+"'";
+
+        List<Map<String,Object>> results = dbObj.searchDB("*", "AutoPosts", whereCondition, "post_time",0, "","");
+
+        // Parse those values into a list of autopost objects
+        for (Map<String,Object> row : results) {
+
+            // Create ap and add to list
+            AutoPost ap = new AutoPost((String) row.get("post_time"), (String) row.get("content"),
+                                        (String) row.get("guild_id"), (String) row.get("channel_id"));
+
+            fetchResults.add(ap);
+
+        }
+
+        return fetchResults;
+
+    }
+
+    /**
+     * Adds a single instance of the Autopost class to the database
+     */
+    public void addAutoPost(AutoPost ap) {
+
+        // Create object array for insertion
+        Object[] data = {ap.guild,ap.contents,ap.channel,ap.postTime.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm"))};
+
+        // Run an insert
+        dbObj.addTo("AutoPosts","(guild_id,content,channel_id,post_time)",data,true);
+
+    }
+
+    /**
+     * Removes an autopost by using its ID
+     * @param apID
+     */
+    public void removeAutoPost(String apID) {
+
+        dbObj.removeFrom("AutoPosts","id == " + apID);
+
+    }
+
+    /**
+     * Retreive an autopost by its ID
+     * @param ID a string representing the ID of the autopost
+     * @return A map representing a single row from the DB
+     */
+    public Map<String,Object> getAutoPost(String ID) {
+
+        // Search the db for a single (unique) entry. Return it if it exists, null otherwise
+        List<Map<String,Object>> result = dbObj.searchDB("*","AutoPosts","id == " + ID,"",1,"","");
+        if (result.size() == 0) { return null; }
+        else { return result.get(0); }
+
+    }
+
+    /**
+     * Grab all Autopost data associated with a channelID
+     * @param cID Message ID to grab data for
+     * @return
+     */
+    public List<Map<String, Object>> getAutoPostsByChannelID(String cID) {
+
+        // Return a db search that uses msgID
+        return dbObj.searchDB("*","AutoPosts","channel_id == '" + cID+"'","",0,"","");
+
+    }
+
 }

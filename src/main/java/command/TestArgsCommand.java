@@ -50,7 +50,7 @@ public class TestArgsCommand extends Command {
         EmbedBuilder eb = new EmbedBuilder();
 
         // Build embed using some basic information about this specific call
-        eb.setThumbnail(Configuration.imageLink);
+        eb.setThumbnail(Configuration.getImageLink());
         eb.setColor(this.color);
         eb.setTitle("Test Args/API results for message id " + cre.getMessage().getId());
         eb.setFooter("Latency: " + cre.getJDA().getGatewayPing() + "ms");

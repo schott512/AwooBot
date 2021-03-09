@@ -144,7 +144,7 @@ public class Database {
 
         // Build up a string which is our statement to run
         StringBuilder sql = new StringBuilder("INSERT ");
-        if (ignore) {sql.append(" OR IGNORE ");}
+        if (ignore) {sql.append("OR IGNORE ");}
         sql.append("INTO ");
         sql.append(table);
         sql.append(parameters);
@@ -246,6 +246,7 @@ public class Database {
      *  @param lim An int indicating the maximum number of rows to return
      *  @param gb A string indicating a GROUP BY clause, use "" for none
      *  @param hv A string indicating a HAVING clause, use "" for none
+     * @return A list of maps representing rows
      */
     public List<Map<String, Object>> searchDB(String sel, String fr, String wh, String ob, int lim, String gb, String hv) {
 
@@ -263,6 +264,7 @@ public class Database {
 
         // Run and Fetch query results
         return runQuery(sql);
+
     }
 
 
@@ -294,6 +296,7 @@ public class Database {
      * Handles sql errors simply by printing them. Do not use if errors must be explicitly handled
      * in another manner. Also logs all sql queries given for debug purposes.
      * @param sql A string which is the sql statement to be executed
+     * @return A list of maps representing rows
      */
     private List<Map<String, Object>> runQuery(String sql) {
 
@@ -346,6 +349,7 @@ public class Database {
 
         if (pre) { logFile.println("\n"); }
         logFile.print(s);
+        logFile.flush();
         if (post) { logFile.println("\n"); }
 
     }
