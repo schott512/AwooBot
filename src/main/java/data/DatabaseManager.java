@@ -34,7 +34,7 @@ public class DatabaseManager {
 
         // Read the file of database info
         String s = File.separator;
-        String path = System.getProperty("user.dir")+ s + "/src/main/java/data/DBTables.txt";
+        String path = System.getProperty("user.dir")+ s + "db" + s + "DBTables.txt";
 
         // File reading shenanigans to get sqlite commands file into one big string ~
         FileReader fr = new FileReader(path);
@@ -328,7 +328,7 @@ public class DatabaseManager {
     public void addAutoPost(AutoPost ap) {
 
         // Create object array for insertion
-        Object[] data = {ap.guild,ap.contents,ap.channel,ap.postTime.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm"))};
+        Object[] data = {ap.guild,ap.contents,ap.channel,ap.postTime.format(DateTimeFormatter.ofPattern("HH:mm"))};
 
         // Run an insert
         dbObj.addTo("AutoPosts","(guild_id,content,channel_id,post_time)",data,true);

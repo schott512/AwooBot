@@ -71,7 +71,7 @@ public class EchoCommand extends Command {
             }
 
             // If the perm check didn't fail, send
-            msg.sendTo(ch).queue();
+            ch.sendMessage(msg.build()).queue();
             return msg;
 
         }
