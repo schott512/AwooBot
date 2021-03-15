@@ -27,7 +27,6 @@ public class AwooBot extends ListenerAdapter {
 
         // Initialize the database manager
         dbManager = new DatabaseManager("AwooBot");
-        dbManager.toggleLogging();
 
         // Create JDA
         JDABuilder builder = JDABuilder.createDefault(configObj.getBotToken());

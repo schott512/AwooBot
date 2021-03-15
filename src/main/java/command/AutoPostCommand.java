@@ -4,6 +4,8 @@ import core.AwooBot;
 import core.autopost.AutoPost;
 import core.events.CommandReceivedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.EmbedType;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,9 @@ public class AutoPostCommand extends Command {
         this.aliases = new String[]{"ap"};
         this.argCount = 4;
         this.helpText = "Edits the AutoPost configuration. Add requires time and content," +
-                " but view requires neither. Autoposts are posts which are to be posted daily at a certain time."
+                " but view requires neither, optionally allowing a specific page. Autoposts are posts which are to be posted daily at a certain time."
                 + " Removing AutoPosts requires their ID (can be gotten from view command). Time arguments must be formatted 24hr 00:00 and include a timezone. Ex. 00:00EST";
-        this.args = "<add|remove|view> <channel|autopostID> <time>\\* <content>\\*";
+        this.args = "<add|remove|view> <channel|autopostID|page> <time>\\* <content>\\*";
         this.commandType = "modify";
 
     }
@@ -129,24 +131,46 @@ public class AutoPostCommand extends Command {
         // Grab DB entries for this message
         List<Map<String, Object>> apSet = AwooBot.dbManager.getAutoPostsByChannelID(cID);
 
+        // Create a list to contain embeds
+        List<MessageEmbed> embeds = new ArrayList<>();
+
+        int pageNum = 2;
+
         // Setup an EmbedBuilder
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("AutoPosts Configured for " + cID);
+        eb.setTitle("AutoPosts Configured for " + cID + "Page 1" );
 
         // Build message which will become the description
         StringBuilder sb = new StringBuilder();
 
         for (Map<String, Object> ap : apSet) {
 
-            // Display the ID, time, and Message Content
-            sb.append("ID: " + ap.get("id").toString() + "  Content: " + ap.get("content").toString() + "  Timestamp (UTC): "
-                    + ap.get("post_time").toString().substring(10) + "\n");
+            int messageLength = ("ID: " + ap.get("id").toString() + "  Content: " + ap.get("content").toString() + "  Timestamp (UTC): "
+                    + ap.get("post_time").toString() + "\n").length();
+
+            if (sb.length()+messageLength < 2000) {
+                // Display the ID, time, and Message Content
+                sb.append("ID: " + ap.get("id").toString() + "  Content: " + ap.get("content").toString() + "  Timestamp (UTC): "
+                        + ap.get("post_time").toString() + "\n");
+            }
+
+            else {
+
+                eb.setColor(this.color);
+                eb.setDescription(sb.toString());
+                embeds.add(eb.build());
+                eb = new EmbedBuilder();
+                sb = new StringBuilder();
+                eb.setTitle("AutoPosts Configured for " + cID + "Page " + String.valueOf(pageNum));
+                pageNum = pageNum + 1;
+
+            }
 
         }
 
-        eb.setColor(this.color);
-        eb.setDescription(sb.toString());
-        cre.reply(eb.build(), false);
+        for (MessageEmbed me : embeds) {
+            cre.reply(me, false);
+        }
 
         return true;
 
